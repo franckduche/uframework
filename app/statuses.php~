@@ -1,0 +1,7 @@
+<?php
+
+$inMemoryFinder = new Model\InMemoryFinder();
+
+$statuses = $inMemoryFinder->findAll();
+
+include __DIR__ . '/../src/View/statuses.php';

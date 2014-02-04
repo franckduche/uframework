@@ -1,0 +1,4 @@
+<p>
+    <?= $status->getContent(); ?> 
+    <a href="/statuses"> Revenir en arrière. </a>
+</p>

@@ -1,0 +1,14 @@
+{
+	"statuses" : [
+		{
+			"id" : 1,
+			"username" : "Mathieu",
+			"content" : "salut"
+		},
+		{
+			"id" : 2,
+			"username" : "Mathieu",
+			"content" : "salut"
+		}	
+	]
+}
