@@ -1,8 +1,0 @@
-
-<?php
-
-$inMemoryFinder = new Model\InMemoryFinder();
-
-$status = $inMemoryFinder->findOneById($id);
-
-include __DIR__ . '/../src/View/status.php';

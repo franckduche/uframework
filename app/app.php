@@ -26,24 +26,35 @@ $app->get('/', function (Request $request) use ($app) {
     $app->redirect('/statuses', array(), 302);
 });
 
+/**
+ * Show all statuses.
+ */
 $app->get('/statuses', function (Request $request) use ($app, $finder) {
 	try {
 		$statuses = $finder->findAll();
 	} catch (StatusNotFoundException $e) {
 		$statuses = array();
-	}	
+	}
+	
     return $app->render('statuses.php', array('statuses' => $statuses));
 });
 
+/**
+ * Show the specified status.
+ */
 $app->get('/statuses/(\w+)', function (Request $request, $id) use ($app, $finder) {
 	try {
 		$status = $finder->findOneById($id);
 	} catch (StatusNotFoundException $e) {
 		throw new HttpException(404, $e->getMessage(), $e);
 	}
+	
     return $app->render('status.php', array('status' => $status));
 });
 
+/**
+ * Add the status posted.
+ */
 $app->post('/statuses', function (Request $request) use ($app, $finder, $jsonDataPath) {
 	try {
 		$statuses = $finder->findAll();
@@ -53,9 +64,13 @@ $app->post('/statuses', function (Request $request) use ($app, $finder, $jsonDat
 	} catch (StatusNotFoundException $e) {
 		throw new HttpException(404, $e->getMessage(), $e);
 	}
+	
     $app->redirect('/statuses');
 });
 
+/**
+ * Delete the specified status.
+ */
 $app->delete('/statuses/(\w+)', function (Request $request, $id) use ($app, $finder, $jsonDataPath) {
 	try {
 		$statusToDelete = $finder->findOneById($id);
@@ -69,6 +84,7 @@ $app->delete('/statuses/(\w+)', function (Request $request, $id) use ($app, $fin
 	} catch (StatusNotFoundException $e) {
 		throw new HttpException(404, $e->getMessage(), $e);
 	}
+	
 	$app->redirect('/statuses');
 });
 
