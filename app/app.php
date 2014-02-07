@@ -16,8 +16,19 @@ $app = new \App(new View\TemplateEngine(
     __DIR__ . '/templates/'
 ), $debug);
 
-$jsonDataPath = __DIR__ . '/../data/statuses.json';
-$finder = new JsonFinder($jsonDataPath);
+$dsn = 'mysql:dbname=uframework;host=127.0.0.1';
+$user = 'uframework';
+$password = 'passw0rd'
+$connection = null;
+try {
+	$connection = new PDO($dsn, $user, $password);
+} catch (PDOException $e) {
+	echo 'Connection failed : ' . $e->getMessage();
+}
+
+// $jsonDataPath = __DIR__ . '/../data/statuses.json';
+// $finder = new JsonFinder($jsonDataPath);
+$finder = new DatabaseFinder($connection);
 
 /**
  * Index
