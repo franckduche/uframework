@@ -6,6 +6,9 @@ use Exception\HttpException;
 
 class InMemoryFinder implements FinderInterface 
 {
+	/**
+     * @var array
+     */
     private $storage = array();
     
     public function __construct()

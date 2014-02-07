@@ -6,10 +6,17 @@ use Exception\StatusNotFoundException;
 
 class JsonFinder implements FinderInterface
 {
+	/**
+     * @var array
+     */
 	private $statuses;
+	
+	/**
+     * @var Connection
+     */
 	private $connection
 	
-	public function __construct($connection)
+	public function __construct(Connection $connection)
 	{
 		$this->connection = $connection;
 		$this->statuses = $this->connection->executeQuery('SELECT * FROM Statuses');

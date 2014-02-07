@@ -6,6 +6,9 @@ use Exception\StatusNotFoundException;
 
 class JsonFinder implements FinderInterface
 {
+	/**
+     * @var array
+     */
 	private $statuses;
 	
 	public function __construct($path)

@@ -6,8 +6,19 @@ namespace Model;
 
 class Status
 {
+	/**
+     * @var string
+     */
 	private $id;
+	
+	/**
+     * @var string
+     */
 	private $content;
+	
+	/**
+     * @var string
+     */
 	private $username;
 	
 	public function __construct($username, $content)
