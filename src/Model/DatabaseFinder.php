@@ -4,7 +4,7 @@ namespace Model;
 
 use Exception\StatusNotFoundException;
 
-class JsonFinder implements FinderInterface
+class DatabaseFinder implements FinderInterface
 {
 	/**
      * @var array
@@ -14,12 +14,12 @@ class JsonFinder implements FinderInterface
 	/**
      * @var Connection
      */
-	private $connection
+	private $connection;
 	
 	public function __construct(Connection $connection)
 	{
 		$this->connection = $connection;
-		$this->statuses = $this->connection->executeQuery('SELECT * FROM Statuses');
+		$this->statuses = $this->connection->selectQuery('SELECT * FROM Statuses', array());
 	}
 	
     public function findAll()
@@ -52,4 +52,12 @@ class JsonFinder implements FinderInterface
 		}
         return $result;
     }
+    
+    public function findContent()
+    {
+	}
+    
+    public function findUsername()
+    {
+	}
 }

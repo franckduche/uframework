@@ -1,5 +1,7 @@
 <?php
 
+namespace Model;
+
 class StatusMapper
 {
 	private $connection;
@@ -16,12 +18,12 @@ class StatusMapper
 			"username" => $status->getUsername(),
 			"content" => $status->getContent()
 		);
-		$this->connection->executeQuery("INSERT INTO Status VALUES (:id, :username, :content)", $params);
+		$this->connection->executeQuery("INSERT INTO Statuses VALUES (:id, :username, :content)", $params);
 	}
 	
 	public function remove(Status $status)
 	{
 		$params = array( "id" => $status->getId() );
-		$this->connection->executeQuery("DELETE FROM Status WHERE id = :id", $params);
+		$this->connection->executeQuery("DELETE FROM Statuses WHERE id = :id", $params);
 	}
 }

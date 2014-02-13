@@ -4,7 +4,10 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Model\InMemoryFinder;
 use Model\JsonFinder;
+use Model\DatabaseFinder;
+use Model\StatusMapper;
 use Model\Status;
+use Model\Connection;
 use Http\Request;
 use Exception\StatusNotFoundException;
 use Exception\HttpException;
@@ -18,10 +21,10 @@ $app = new \App(new View\TemplateEngine(
 
 $dsn = 'mysql:dbname=uframework;host=127.0.0.1';
 $user = 'uframework';
-$password = 'passw0rd'
+$password = 'passw0rd';
 $connection = null;
 try {
-	$connection = new PDO($dsn, $user, $password);
+	$connection = new Connection($dsn, $user, $password);
 } catch (PDOException $e) {
 	echo 'Connection failed : ' . $e->getMessage();
 }
@@ -29,6 +32,7 @@ try {
 // $jsonDataPath = __DIR__ . '/../data/statuses.json';
 // $finder = new JsonFinder($jsonDataPath);
 $finder = new DatabaseFinder($connection);
+$mapper = new StatusMapper($connection);
 
 /**
  * Index
@@ -66,12 +70,10 @@ $app->get('/statuses/(\w+)', function (Request $request, $id) use ($app, $finder
 /**
  * Add the status posted.
  */
-$app->post('/statuses', function (Request $request) use ($app, $finder, $jsonDataPath) {
+$app->post('/statuses', function (Request $request) use ($app, $finder, $mapper) {
 	try {
-		$statuses = $finder->findAll();
 		$status = new Status($request->getParameter('username'), $request->getParameter('content'));
-		$statuses [] = $status;
-		file_put_contents($jsonDataPath, $finder->toJson($statuses));
+		$mapper->persist($status);
 	} catch (StatusNotFoundException $e) {
 		throw new HttpException(404, $e->getMessage(), $e);
 	}
@@ -82,7 +84,7 @@ $app->post('/statuses', function (Request $request) use ($app, $finder, $jsonDat
 /**
  * Delete the specified status.
  */
-$app->delete('/statuses/(\w+)', function (Request $request, $id) use ($app, $finder, $jsonDataPath) {
+$app->delete('/statuses/(\w+)', function (Request $request, $id) use ($app, $finder) {
 	try {
 		$statusToDelete = $finder->findOneById($id);
 		$statuses = $finder->findAll();
@@ -91,7 +93,6 @@ $app->delete('/statuses/(\w+)', function (Request $request, $id) use ($app, $fin
 				unset($statuses[$index]);
 			}
 		}
-		file_put_contents($jsonDataPath, $finder->toJson($statuses));
 	} catch (StatusNotFoundException $e) {
 		throw new HttpException(404, $e->getMessage(), $e);
 	}
