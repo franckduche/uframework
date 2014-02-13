@@ -2,7 +2,6 @@
 
 namespace Http;
 
-use Exception\HttpException;
 use \Negotiation\FormatNegotiator;
 
 class Request
@@ -61,9 +60,6 @@ class Request
 	{
 		$result = null;
 		$result = $this->parameters[$name];
-		if (null === $result) {
-			throw new HttpException(404, "Parameter not found.");
-		}	
 		return $result;	
 	}
 	

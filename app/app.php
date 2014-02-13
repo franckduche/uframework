@@ -2,8 +2,6 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Model\InMemoryFinder;
-use Model\JsonFinder;
 use Model\DatabaseFinder;
 use Model\StatusMapper;
 use Model\Status;
@@ -19,6 +17,7 @@ $app = new \App(new View\TemplateEngine(
     __DIR__ . '/templates/'
 ), $debug);
 
+// DB Connection
 $dsn = 'mysql:dbname=uframework;host=127.0.0.1';
 $user = 'uframework';
 $password = 'passw0rd';
@@ -29,8 +28,6 @@ try {
 	echo 'Connection failed : ' . $e->getMessage();
 }
 
-// $jsonDataPath = __DIR__ . '/../data/statuses.json';
-// $finder = new JsonFinder($jsonDataPath);
 $finder = new DatabaseFinder($connection);
 $mapper = new StatusMapper($connection);
 
@@ -45,26 +42,38 @@ $app->get('/', function (Request $request) use ($app) {
  * Show all statuses.
  */
 $app->get('/statuses', function (Request $request) use ($app, $finder) {
+	$format = $request->guessBestFormat();
+
 	try {
-		$statuses = $finder->findAll();
+		$criteria['ORDER BY'] = $request->getParameter('orderBy');
+		$criteria['LIMIT 0, '] = $request->getParameter('limit');
+		$statuses = $finder->findAll($criteria);
 	} catch (StatusNotFoundException $e) {
 		$statuses = array();
 	}
 	
-    return $app->render('statuses.php', array('statuses' => $statuses));
+	if ($format === "application/json") {
+		return new Response(json_encode($statuses), 200, array('Content-Type' => 'application/json'));
+	}
+	return $app->render('statuses.php', array('statuses' => $statuses));
 });
 
 /**
  * Show the specified status.
  */
 $app->get('/statuses/(\w+)', function (Request $request, $id) use ($app, $finder) {
+	$format = $request->guessBestFormat();
+	
 	try {
 		$status = $finder->findOneById($id);
 	} catch (StatusNotFoundException $e) {
 		throw new HttpException(404, $e->getMessage(), $e);
 	}
 	
-    return $app->render('status.php', array('status' => $status));
+	if ($format === "application/json") {
+		return new Response(json_encode($status), 200, array('Content-Type' => 'application/json'));
+	}
+	return $app->render('status.php', array('status' => $statuses));
 });
 
 /**

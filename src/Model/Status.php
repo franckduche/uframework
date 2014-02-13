@@ -28,20 +28,21 @@ class Status
 		$this->id = uniqid();
 	}
 	
+	public function __construct($id, $username, $content)
+	{
+		$this->username = htmlentities($username);
+		$this->content = htmlentities($content);
+		$this->id = $id;
+	}
+	
 	public static function fromArray(array $statusArray = array())
 	{
-		return (new self($statusArray['username'], $statusArray['content']))->setId($statusArray['id']);
+		return new self($statusArray['id'], $statusArray['username'], $statusArray['content']);
 	}
 	
 	public function getId()
 	{
 		return $this->id;
-	}
-	
-	public function setId($id)
-	{
-		$this->id = $id;
-		return $this;
 	}
 	
 	public function getContent()

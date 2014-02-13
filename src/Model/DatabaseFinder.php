@@ -22,8 +22,10 @@ class DatabaseFinder implements FinderInterface
 		$this->statuses = $this->connection->selectQuery('SELECT * FROM Statuses', array());
 	}
 	
-    public function findAll()
+    public function findAll(array $criteria = array())
     {
+		$this->statuses = $this->connection->selectQuery('SELECT * FROM Statuses' . $this->getCriteriaString($criteria), array());
+	
 		if (!$this->statuses) {
 			throw new StatusNotFoundException("Statuses not found.");
 		}
@@ -53,11 +55,22 @@ class DatabaseFinder implements FinderInterface
         return $result;
     }
     
-    public function findContent()
+    public function findContent($criteria)
     {
 	}
     
-    public function findUsername()
+    public function findUsername($criteria)
     {
+	}
+	
+	private function getCriteriaString(array $criteria = array())
+	{
+		$query = '';
+		if (count($criteria) > 0) {
+			foreach ($criteria as $name => $crit) {
+				$query .= ' ' . $name . ' ' . $crit;
+			}
+		}
+		return $query;
 	}
 }
