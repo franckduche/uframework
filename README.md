@@ -10,6 +10,7 @@ Outils et langages utilisés :
 * Editeur de texte simple pour l'écriture du code.
 * Composer pour gérer les dépendances du projet.
 * PHPUnit pour les tests unitaires.
+* Goutte pour un test fonctionnel.
 * Negotiation pour déterminer le format de réponse.
 
 Chronologie :
@@ -22,4 +23,7 @@ Chronologie :
 	Implémentation des contrôleurs qui sont ici des closures appelées avec $app.
 	Pour représenter la requête, création d'une classe `Request`.
 4.	Pour représenter la réponse, création d'une classe `Response`.
-5.	Ajouter d'une connexion à une base de données.
+5.	Ajouter d'une connexion à une base de données, pour remplacer la sauvegarde dans un fichier JSON.
+	Création de tests unitaires.
+6.	Ajout d'un module simple d'authentification avec un pare-feu.
+	Création de tests fonctionnels.
