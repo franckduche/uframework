@@ -10,14 +10,18 @@ use Http\Request;
 use Exception\StatusNotFoundException;
 use Exception\HttpException;
 
-// Config
+/**
+ *  Config
+ */
 $debug = true;
 
 $app = new \App(new View\TemplateEngine(
     __DIR__ . '/templates/'
 ), $debug);
 
-// DB Connection
+/** 
+ * DB Connection
+ */
 $dsn = 'mysql:dbname=uframework;host=127.0.0.1';
 $user = 'uframework';
 $password = 'passw0rd';
@@ -32,10 +36,70 @@ $finder = new DatabaseFinder($connection);
 $mapper = new StatusMapper($connection);
 
 /**
+ * Add listener
+ */
+$app->addListener('process.before', function (Request $request) use ($app) {
+    session_start();
+
+    $allowed = [
+        '/statuses' => [ Request::GET, Request::POST, Request::DELETE ],
+        '/login' => [ Request::GET, Request::POST ],
+        '/' => [ Request::GET ]
+    ];
+
+    if (isset($_SESSION['is_authenticated'])
+        && true === $_SESSION['is_authenticated']) {
+        return;
+    }
+
+    foreach ($allowed as $pattern => $methods) {
+        if (preg_match(sprintf('#^%s$#', $pattern), $request->getUri())
+            && in_array($request->getMethod(), $methods)) {
+            return;
+        }
+    }
+
+	return $app->redirect('/login');
+});
+
+/**
  * Index
  */
 $app->get('/', function (Request $request) use ($app) {
     $app->redirect('/statuses', array(), 302);
+});
+
+/**
+ * Login page.
+ */
+$app->get('/login', function () use ($app) {
+    return $app->render('login.php');
+});
+
+/**
+ * Login
+ */
+$app->post('/login', function (Request $request) use ($app) {
+    $username = $request->getParameter('username');
+    $pass = $request->getParameter('password');
+
+    if (!empty($username) && !empty($pass)) {
+        $_SESSION['is_authenticated'] = true;
+		$_SESSION['username'] = $username;
+
+        return $app->redirect('/');
+    }
+
+    return $app->render('login.php', [ 'username' => $username ]);
+});
+
+/**
+ * Logout.
+ */
+$app->get('/logout', function (Request $request) use ($app) {
+    session_destroy();
+
+    return $app->redirect('/');
 });
 
 /**
@@ -93,15 +157,10 @@ $app->post('/statuses', function (Request $request) use ($app, $finder, $mapper)
 /**
  * Delete the specified status.
  */
-$app->delete('/statuses/(\w+)', function (Request $request, $id) use ($app, $finder) {
+$app->delete('/statuses/(\w+)', function (Request $request, $id) use ($app, $finder, $mapper) {
 	try {
 		$statusToDelete = $finder->findOneById($id);
-		$statuses = $finder->findAll();
-		foreach ($statuses as $index => $status) {
-			if ($status->getId() === $statusToDelete->getId()) {
-				unset($statuses[$index]);
-			}
-		}
+		$mapper->remove($statusToDelete);
 	} catch (StatusNotFoundException $e) {
 		throw new HttpException(404, $e->getMessage(), $e);
 	}

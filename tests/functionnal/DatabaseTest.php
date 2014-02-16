@@ -1,6 +1,6 @@
 <?php
 
-class StatusDataMapperTest extends TestCase
+class DatabaseTest extends TestCase
 {
 	private $finder;
 
@@ -19,7 +19,7 @@ SQL
         );
 		
         $mapper = new \Model\StatusDataMapper($this->con);
-		$mapper->persist(new Status('aaa', 'Franck', 'salut'));
+		$mapper->persist(new Status('Franck', 'salut', 'aaa'));
 		$mapper->persist(new Status('Mathieu', 'iopiop'));
 		
 		$this->finder = new \Model\DatabaseFinder($this->con);

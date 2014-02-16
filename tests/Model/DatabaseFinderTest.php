@@ -1,6 +1,6 @@
 <?php
 
-class StatusMapperTest extends TestCase
+class DatabaseFinder extends TestCase
 {
 	private $finder;
 	

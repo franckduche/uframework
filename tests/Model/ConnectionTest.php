@@ -1,6 +1,6 @@
 <?php
 
-class AppTest extends TestCase
+class ConnectionTest extends TestCase
 {
 	private $connection;
 	

@@ -9,6 +9,8 @@ use Http\Response;
 
 class App
 {
+	use EventDispatcherTrait;
+	
     /**
      * @var array
      */
@@ -91,6 +93,19 @@ class App
         return $this;
     }
 
+    /**
+     * @param string   $pattern
+     * @param callable $callable
+     *
+     * @return App
+     */
+    public function put($pattern, $callable)
+    {
+        $this->registerRoute(Request::PUT, $pattern, $callable);
+
+        return $this;
+    }
+
     public function run(Request $request = null)
     {
 		if (null === $request) {
@@ -115,6 +130,8 @@ class App
     private function process(Request $request, Route $route)
     {
         try {
+			$this->dispatch('process.before', [ $request ]);
+			
             $arguments = $route->getArguments();
 			array_unshift($arguments, $request);
 			

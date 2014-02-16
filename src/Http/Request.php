@@ -59,7 +59,9 @@ class Request
 	public function getParameter($name, $default = null)
 	{
 		$result = null;
-		$result = $this->parameters[$name];
+		if (array_key_exists($name, $this->parameters)) {
+			$result = $this->parameters[$name];
+		}
 		return $result;	
 	}
 	

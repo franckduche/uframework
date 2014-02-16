@@ -21,23 +21,16 @@ class Status
      */
 	private $username;
 	
-	public function __construct($username, $content)
+	public function __construct($username, $content, $id = null)
 	{
 		$this->username = htmlentities($username);
 		$this->content = htmlentities($content);
-		$this->id = uniqid();
-	}
-	
-	public function __construct($id, $username, $content)
-	{
-		$this->username = htmlentities($username);
-		$this->content = htmlentities($content);
-		$this->id = $id;
+		$this->id = $id == null ? uniqid() : $id;
 	}
 	
 	public static function fromArray(array $statusArray = array())
 	{
-		return new self($statusArray['id'], $statusArray['username'], $statusArray['content']);
+		return new self($statusArray['username'], $statusArray['content'], $statusArray['id']);
 	}
 	
 	public function getId()

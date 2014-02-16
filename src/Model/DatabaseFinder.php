@@ -68,7 +68,9 @@ class DatabaseFinder implements FinderInterface
 		$query = '';
 		if (count($criteria) > 0) {
 			foreach ($criteria as $name => $crit) {
-				$query .= ' ' . $name . ' ' . $crit;
+				if (!empty($crit)) {
+					$query .= ' ' . $name . ' ' . $crit;
+				}
 			}
 		}
 		return $query;
